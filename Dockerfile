@@ -1,28 +1,17 @@
 FROM mysql:5.7
 
-ENV NODE_TAR_TAG mha4mysql-node-0.58
-COPY ./${NODE_TAR_TAG}.tar.gz /tmp
-
 # 更新apt-get源
-RUN echo \
-    deb http://mirrors.aliyun.com/debian/ buster main non-free contrib\
-    deb-src http://mirrors.aliyun.com/debian/ buster main non-free contrib\
-    deb http://mirrors.aliyun.com/debian-security buster/updates main\
-    deb-src http://mirrors.aliyun.com/debian-security buster/updates main\
-    deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib\
-    deb-src http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib\
-    deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib\
-    deb-src http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib\
-    > /etc/apt/sources.list
+RUN echo 'deb http://mirrors.aliyun.com/debian/ buster main non-free contrib\n\
+    deb-src http://mirrors.aliyun.com/debian/ buster main non-free contrib\n\
+    deb http://mirrors.aliyun.com/debian-security buster/updates main\n\
+    deb-src http://mirrors.aliyun.com/debian-security buster/updates main\n\
+    deb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib\n\
+    deb-src http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib\n\
+    deb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib\n\
+    deb-src http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib\n' >/etc/apt/sources.list     
 
-RUN build_deps='ssh sshpass perl libdbi-perl libmodule-install-perl libdbd-mysql-perl make' \
+# 下载依赖组件
+RUN build_deps='ssh mha4mysql-node' \
     && apt-get update \
-    && apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages install $build_deps \
-    && tar -zxf /tmp/${NODE_TAR_TAG}.tar.gz -C /opt \
-    && cd /opt/${NODE_TAR_TAG} \
-    && perl Makefile.PL \
-    && make \
-    && make install \
-    && cd /opt \
-    && rm -rf /opt/mha4mysql-* \
+    && apt-get -y install $build_deps \
     && apt-get clean
