@@ -26,8 +26,3 @@ RUN build_deps='ssh sshpass perl libdbi-perl libmodule-install-perl libdbd-mysql
     && cd /opt \
     && rm -rf /opt/mha4mysql-* \
     && apt-get clean
-
-ENV MHA_ROOT_PASSWORD root
-RUN echo "root:${MHA_ROOT_PASSWORD}" | chpasswd \
-    && sed -i "s/PermitRootLogin prohibit-password/PermitRootLogin yes/" /etc/ssh/sshd_config \
-    && sed -i "s/PermitRootLogin without-password/PermitRootLogin yes/" /etc/ssh/sshd_config    
